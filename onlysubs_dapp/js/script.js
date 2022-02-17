@@ -66,6 +66,11 @@ function getCreators() {
     return DApp.contracts.Onlysubs.getCreators().call();
 }
 
+//function getCreatorFee(address _creator) public view returns(uint) 
+function getCreatorFee() {
+    return DApp.contracts.Onlysubs.getCreatorFee().call();
+}
+
 //function getNameCreator() view external returns(string)
 function getNameCreator() {
     return DApp.contracts.Onlysubs.getNameCreator().call({from: DApp.account});
@@ -75,6 +80,16 @@ function getNameCreator() {
 function getSalesValue() {
     let anotherCreator = document.getElementsById("field_input_getSalesValue");
     return DApp.contracts.Onlysubs.methods.getSalesValue(anotherCreator).call();
+}
+
+//function getAmountCreator() view external returns(uint) 
+function getAmountCreator() {
+  return DApp.contracts.Onlysubs.methods.getAmountCreator().call({from: DApp.account});
+}
+
+//function withdraw() external 
+function withdraw() {
+  return DApp.contracts.Onlysubs.methods.withdraw().call({from: DApp.account});
 }
 
 //SUBS
@@ -160,62 +175,91 @@ function subscriberRegistration() {
 function subscribe() {
     let newCreator_sub = document.getElementById("field_input_addressSubscribe");
     let subscriptionTime_sub = document.getElementById("field_input_subscriptionTimeSubscribe");
-    let feeSub = feeCreator*subscriptionTime_sub;
+    let feeSub;
+    getCreatorFee(newCreator_sub).then((creatorFee) => {
+      feeSub = creatorFee * subscriptionTime_sub;
+    });
     return DApp.contracts.Onlysubs.methods.subscribe(newCreator_sub,subscriptionTime_sub).send({from: DApp.account, value:feeSub});
 }
 
 //function renewSubscribe(address _creator, uint _subscriptionTime) payable external 
 function renewSubscribe() {
     let creatorRenew = document.getElementById("field_input_addressSubscribe");
-    let subscriptionTimeRenew = document.getElementById("field_input_subscriptionTimeRenewSubscribe");
-    let valortaxa=1;
-    return DApp.contracts.Onlysubs.methods.renewSubscribe(creatorRenew, subscriptionTimeRenew).send({from: DApp.account, value:valortaxa});
+    let subscriptionTimeRenew = document.getElementById("field_input_subscriptionTimeRenewSubscribe");  
+    let feeRenerSub;
+    getCreatorFee(creatorRenew).then((creatorFee) => {
+      feeRenerSub = creatorFee * subscriptionTimeRenew;
+    });
+    return DApp.contracts.Onlysubs.methods.renewSubscribe(creatorRenew, subscriptionTimeRenew).send({from: DApp.account, value:feeRenerSub});
 }
 
-
-
-// *** ATUALIZAÇÃO DO HTML *** //
-
 function inicializaInterface() {
+    document.getElementById("btnBuyMsgs").style.display = "none";
+    document.getElementById("btnCreateMsg").style.display = "none";
+    document.getElementById("btnCreatorRegistration").style.display = "block";
+    document.getElementById("btnWithdraw").style.display = "none";    
+    getNameCreator().then((result) => { 
+      if(result) {
+          getAmountCreator().then((amountCretor) => {
+            document.getElementById("output_field_getNameCreator").innerHTML = result + " $" + amountCretor;
+            if(amountCretor > 0){
+                document.getElementById("btnWithdraw").style.display = "block";  
+            }
+          });
+
+          document.getElementById("btnBuyMsgs").style.display = "block";
+          document.getElementById("btnCreateMsg").style.display = "block";
+          document.getElementById("btnCreatorRegistration").style.display = "none";
+
+          getMessages
+      }    
+    });
+    document.getElementById("btnRegistrationSubscriber").style.display = "block";
+    document.getElementById("btnRenewSubscribe").style.display = "block";
+    getNameSub().then((result) => { 
+      if(result) {
+        document.getElementById("output_field_getNameSub").innerHTML = result;
+        document.getElementById("btnRegistrationSubscriber").style.display = "none";
+        document.getElementById("btnRenewSubscribe").style.display = "none";
+        getSignatures().then((assinaturas) => {
+          registrarAssinaturas(assinaturas);
+          let conteudos = []
+          for (let i = 0; i < assinaturas.length; i++){
+            getMessages(assinaturas[i]).then((conteudo) => {
+              conteudos.append(conteudo);
+            });  
+            conteudos
+          }
+        });        
+        getExpiredSubscriptions().then((registrarAssinaturasExpiradas) => {
+          registrarAssinaturas(registrarAssinaturasExpiradas);
+        });        
+
+      }    
+    });  
+    getCreators().then((todosCreators) => {
+      registrarTodosCreators(todosCreators);
+    });    
     document.getElementById("btnCreatorRegistration").onclick = creatorRegistration;
     document.getElementById("btnUpdateFee").onclick = updateFee;
     document.getElementById("btnUpdateSalesValue").onclick = updateSalesValue;
     document.getElementById("btnGetSalesValue").onclick = getSalesValue;
-    document.getElementById("btnCreateMsg").onclick = createMsg;
-    document.getElementById("btnGetCreators").onclick = getCreators;
+    document.getElementById("btnCreateMsg").onclick = createMsg;    
     document.getElementById("btnBuyMsgs").onclick = buyMsgs;
     document.getElementById("btnGetSignatures").onclick = getSignatures;
     document.getElementById("btnGetRemainingDaysSubscription").onclick = getRemainingDaysSubscription;
     document.getElementById("btnGetSubscribers").onclick = getSubscribers;
-    document.getElementById("btnRegistrationSubscriber").onclick = registrationSubscriber;
+    document.getElementById("btnRegistrationSubscriber").onclick = subscriberRegistration;
     document.getElementById("btnSubscribe").onclick = subscribe;
     document.getElementById("btnRenewSubscribe").onclick = renewSubscribe;
+    document.getElementById("btnGetCreatorFee").onclick = getCreatorFee;  
     atualizaInterface();
     //DApp.contracts.Rifa.getPastEvents("RifaComprada", { fromBlock: 0, toBlock: "latest" }).then((result) => registraEventos(result));  
     //DApp.contracts.Rifa.events.RifaComprada((error, event) => registraEventos([event]));  
 }
 
 function atualizaInterface() {
-  document.getElementById("btnBuyMsgs").style.display = "none";
-  document.getElementById("btnCreateMsg").style.display = "none";
-  document.getElementById("btnCreatorRegistration").style.display = "block";
-  getNameCreator().then((result) => { 
-    if(result) {
-      document.getElementById("output_field_getNameCreator").innerHTML = result;
-      document.getElementById("btnBuyMsgs").style.display = "block";
-      document.getElementById("btnCreateMsg").style.display = "block";
-      document.getElementById("btnCreatorRegistration").style.display = "none";
-    }    
-  });
-  document.getElementById("btnRegistrationSubscriber").style.display = "block";
-  document.getElementById("btnRenewSubscribe").style.display = "block";
-  getNameSub().then((result) => { 
-    if(result) {
-      document.getElementById("output_field_getNameSub").innerHTML = result;
-      document.getElementById("btnRegistrationSubscriber").style.display = "none";
-      document.getElementById("btnRenewSubscribe").style.display = "none";
-    }    
-  });
+
   getCreators().then((result) => {
     document.getElementById("output_field_getCreators").innerHTML = result;
   });
@@ -228,20 +272,66 @@ function atualizaInterface() {
   getSalesValue().then((result) => {
     document.getElementById("output_field_getSalesValue").innerHTML = result;
   });
-  
-
+  getCreatorFee().then((result) => {
+    document.getElementById("output_field_getSalesValue").innerHTML = result;
+  });
 }
-/*
-function preencheCreators(creators) {
-  let tableCretors = document.getElementById("tableCretors");  
-  creators.forEach(creator => {
-  }
-  )
+
+function resistarConteudo(conteudos) {
+  let tableConteudo = document.getElementById("tableConteudo");
+  conteudos.forEach(conteudo => {
+    let tr = document.createElement("tr");
+    let td1 = document.createElement("td");
+    td1.innerHTML = conteudo["_title"];
+    let td2 = document.createElement("td");
+    td2.innerHTML = conteudo["_author"];
+    let td3 = document.createElement("td");
+    td3.innerHTML = conteudo["_date"];  
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    tableConteudo.appendChild(tr);
+    });
 }
-*/
+
+function registrarAssinaturas(assinaturas) {
+  let tableInscricoes = document.getElementById("tableInscricoes");
+  assinaturas.forEach(assinatura => {
+    let tr2 = document.createElement("tr");    
+    let td4 = document.createElement("td");
+    td4.innerHTML = assinatura;
+    tr2.appendChild(td4);
+    tableInscricoes.appendChild(tr2);    
+  });
+}
 
 
-/*
+function registrarAssinaturasExpiradas(assinaturasExpiradas) {
+  let tableInscricoesExpiradas = document.getElementById("tableInscricoesExpiradas");
+  assinaturasExpiradas.forEach(assinaturaExpirada => {
+    let tr3 = document.createElement("tr");
+    let td5 = document.createElement("td");
+    td5.innerHTML = assinaturaExpirada;
+    tr3.appendChild(td5);
+    tableInscricoesExpiradas.appendChild(tr3);    
+  });
+}
+
+function registrarTodosCreators(todosCreators) {
+  let tableCreatorsRegistrados = document.getElementById("tableCreatorsRegistrados");
+  todosCreators.forEach(creatorRegistrado => {
+    let tr4 = document.createElement("tr");
+    let td6 = document.createElement("td");
+    td6.innerHTML = assinaturaExpirada;
+    tr4.appendChild(td6);
+    tableInscricoesExpiradas.appendChild(tr4);    
+  });
+}
+
+tableCreatorsRegistrados
+
+
+
 
 function registraEventos(eventos) {
   let table = document.getElementById("events");
@@ -259,4 +349,3 @@ function registraEventos(eventos) {
     table.appendChild(tr);
   });
 }
-*/
