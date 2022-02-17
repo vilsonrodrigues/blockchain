@@ -194,6 +194,16 @@ function renewSubscribe() {
     return DApp.contracts.Onlysubs.methods.renewSubscribe(creatorRenew, subscriptionTimeRenew).send({from: DApp.account, value:feeRenerSub}).then(atualizaInterface);
 }
 
+function setagetSalesValue() {
+  document.getElementById("output_field_getSalesValue") = getSalesValue();
+}
+
+function setagetCreatorFee(){
+  document.getElementById("output_field_getSalesValue") = getCreatorFee();
+
+}
+
+
 function inicializaInterface() {
     document.getElementById("btnBuyMsgs").style.display = "none";
     document.getElementById("btnCreateMsg").style.display = "none";
@@ -204,17 +214,18 @@ function inicializaInterface() {
     document.getElementById("btnCreatorRegistration").onclick = creatorRegistration;
     document.getElementById("btnUpdateFee").onclick = updateFee;
     document.getElementById("btnUpdateSalesValue").onclick = updateSalesValue;
-    document.getElementById("btnGetSalesValue").onclick = getSalesValue;
+    document.getElementById("btnGetSalesValue").onclick = setagetSalesValue;
     document.getElementById("btnCreateMsg").onclick = createMsg;    
-    document.getElementById("btnBuyMsgs").onclick = buyMsgs;
-    document.getElementById("btnGetSignatures").onclick = getSignatures;
-    document.getElementById("btnGetRemainingDaysSubscription").onclick = getRemainingDaysSubscription;
-    document.getElementById("btnGetSubscribers").onclick = getSubscribers;
+    document.getElementById("btnBuyMsgs").onclick = buyMsgs;    
     document.getElementById("btnRegistrationSubscriber").onclick = subscriberRegistration;
     document.getElementById("btnSubscribe").onclick = subscribe;
+    document.getElementById("btnSubscribe").style.display = "block";
     document.getElementById("btnRenewSubscribe").onclick = renewSubscribe;
-    document.getElementById("btnGetCreatorFee").onclick = getCreatorFee;  
+    document.getElementById("btnGetCreatorFee").style.display = "block";
+    document.getElementById("btnGetCreatorFee").onclick = setagetCreatorFee;  
     atualizaInterface();
+    
+  
     //DApp.contracts.Rifa.getPastEvents("RifaComprada", { fromBlock: 0, toBlock: "latest" }).then((result) => registraEventos(result));  
     //DApp.contracts.Rifa.events.RifaComprada((error, event) => registraEventos([event]));  
 }
@@ -256,12 +267,6 @@ function atualizaInterface() {
   getCreators().then((todosCreators) => {
     registrarTodosCreators(todosCreators);
   });    
-  getSalesValue().then((result) => {
-    document.getElementById("output_field_getSalesValue").innerHTML = result;
-  });
-  getCreatorFee().then((result) => {
-    document.getElementById("output_field_getSalesValue").innerHTML = result;
-  });
 }
 
 function resistarConteudo(conteudos) {
