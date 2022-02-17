@@ -132,21 +132,21 @@ function creatorRegistration() {
     let salesValue_CreatorRegistration = document.getElementById("field_input_salesValueCreatorRegistration");
     return DApp.contracts.Onlysubs.methods.creatorRegistration(name_CreatorRegistration,
                                                                fee_CreatorRegistration,
-                                                               salesValue_CreatorRegistration).send({from: DApp.account}).then(faca_algo);
+                                                               salesValue_CreatorRegistration).send({from: DApp.account}).then(atualizaInterface)
 }
 
 //function createMsg(string memory _body, string memory _author) external 
 function createMsg() {
     let titleMsg = document.getElementById("field_input_titleMsg");
     let authorMsg = document.getElementById("field_input_authorMsg");
-    return DApp.contracts.Onlysubs.methods.createMsg(titleMsg, authorMsg).send({from: DApp.account});
+    return DApp.contracts.Onlysubs.methods.createMsg(titleMsg, authorMsg).send({from: DApp.account}).then(atualizaInterface);
 }
     
 //function buyMsgs(address _creator) payable external {                          FALTA
 //field_input_buyMsg
 function buyMsgs() {
   let address_buy_msg = document.getElementById("field_input_buyMsg");
-  return DApps.contracts.Onlysubs.methods.buyMsgs(address_buy_msg).send({from: DApp.account});
+  return DApps.contracts.Onlysubs.methods.buyMsgs(address_buy_msg).send({from: DApp.account}).then(atualizaInterface);
 }
 
 //function updateFee(uint _fee) external 
@@ -210,8 +210,6 @@ function inicializaInterface() {
           document.getElementById("btnBuyMsgs").style.display = "block";
           document.getElementById("btnCreateMsg").style.display = "block";
           document.getElementById("btnCreatorRegistration").style.display = "none";
-
-          getMessages
       }    
     });
     document.getElementById("btnRegistrationSubscriber").style.display = "block";
@@ -228,7 +226,7 @@ function inicializaInterface() {
             getMessages(assinaturas[i]).then((conteudo) => {
               conteudos.append(conteudo);
             });  
-            conteudos
+            registrarTodosCreators(todosCreators);
           }
         });        
         getExpiredSubscriptions().then((registrarAssinaturasExpiradas) => {
@@ -322,30 +320,8 @@ function registrarTodosCreators(todosCreators) {
   todosCreators.forEach(creatorRegistrado => {
     let tr4 = document.createElement("tr");
     let td6 = document.createElement("td");
-    td6.innerHTML = assinaturaExpirada;
+    td6.innerHTML = creatorRegistrado;
     tr4.appendChild(td6);
-    tableInscricoesExpiradas.appendChild(tr4);    
-  });
-}
-
-tableCreatorsRegistrados
-
-
-
-
-function registraEventos(eventos) {
-  let table = document.getElementById("events");
-  eventos.forEach(evento => {
-    let tr = document.createElement("tr");
-    let td1 = document.createElement("td");
-    td1.innerHTML = "<a href='https://ropsten.etherscan.io/address/"+ evento["returnValues"]["comprador"] +"'>" + evento["returnValues"]["comprador"] + "</a>";
-    let td2 = document.createElement("td");
-    td2.innerHTML = evento["returnValues"]["quant"];
-    let td3 = document.createElement("td");  
-    td3.innerHTML = "<a href='https://ropsten.etherscan.io/tx/"+ evento["transactionHash"] +"'>" + evento["transactionHash"] + "</a>";
-    tr.appendChild(td1);
-    tr.appendChild(td2);
-    tr.appendChild(td3);
-    table.appendChild(tr);
+    tableCreatorsRegistrados.appendChild(tr4);    
   });
 }
