@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>OnlySubs</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Open Sans:400,700"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+  </head>
+
+  <body class="bg-light">
+    <div class="container">
+      <div class="py-5 text-center">
+        <h2>OnlySubs</h2>
+        <p class="lead">
+          Sistema descentralizado de assinatura de conteúdo 
+        </p>
+      </div>
+
+      <div class="row">
+        <div class="col-md order-md mb">
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Seção Creator</span>
+            <span class="badge badge-secondary badge-pill" id="output_field_getNameCreator"
+              >#</span
+            >
+          </h4>
+
+          <form class="card createMsg">
+            <h6 style="text-align: left;"> Cadastro de Creator</h6>  
+            <div class="input-group">
+              <!-- Bloco de cadastro de criador -->
+              <input
+                type="text"
+                class="form-control"
+                id="field_input_nameCreatorRegistration"
+                placeholder="Nome"
+              />
+              <input
+              type="number"
+              class="form-control"
+              id="field_input_feeCreatorRegistration"
+              placeholder="Taxa de sub"
+              />
+              <input
+              type="text"
+              class="form-control"
+              id="field_input_salesValueCreatorRegistration"
+              placeholder="Valor de venda"
+              />
+              <div class="input-group-append">
+                <button type="button" id="btnCreatorRegistration" class="btn btn-secondary">
+                  Cadastrar
+                </button>
+              </div>
+            </div>
+          </form>
+          
+          <br />
+
+          <form class="card createMsg">
+            <h6 style="text-align: left;"> Nova mensagem</h6>  
+            <div class="input-group">
+              <!-- Bloco de criação de mensagem -->
+              <input
+                type="text"
+                class="form-control"
+                id="field_input_titleMsg"
+                placeholder="Título"
+              />
+              <input
+                type="text"
+                class="form-control"
+                id="field_input_authorMsg"
+                placeholder="Autor"
+              />              
+              <div class="input-group-append">
+                <button type="button" id="btnComprar" class="btn btn-secondary">
+                  Criar
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <br />
+
+          <form class="card updatefee">
+            <h6 style="text-align: left;"> Atualizar valor de taxa de inscrição</h6>  
+            <div class="input-group">
+              <!-- Bloco de criação de atualização de fee -->
+              <input
+                type="number"
+                class="form-control"
+                id="field_input_updateFee"
+                placeholder="Taxa"
+              />        
+              <div class="input-group-append">
+                <button type="button" id="btnUpdateFee" class="btn btn-secondary">
+                  Atualizar 
+                </button>
+              </div>
+            </div>
+          </form>          
+
+          <br />
+
+          <form class="card updateSalesValue">
+            <h6 style="text-align: left;"> Atualizar valor de venda de todo conteúdo</h6>              
+            <div class="input-group">
+              <!-- Bloco de atualizar valor de venda de conteudo -->
+              <input
+                type="number"
+                class="form-control"
+                id="field_input_updateSalesValue"
+                placeholder="Valor"
+              />        
+              <div class="input-group-append">
+                <button type="button" id="btnUpdateSalesValue" class="btn btn-secondary">
+                  Atualizar
+                </button>
+              </div>
+            </div>
+          </form>          
+
+          <br />
+
+          <form class="card getSalesValue">
+            <h6 style="text-align: left;"> Buscar valor de venda de todo conteúdo de um creator</h6>              
+            <div class="input-group">              
+              <!-- Bloco de coleta de valor de venda de conteudo de um criador -->
+              <input
+                type="text"
+                class="form-control"
+                id="field_input_getSalesValue"
+                placeholder="Endereço do creator"
+              />        
+              <div class="input-group-append">
+                <button type="button" id="btnGetSalesValue" class="btn btn-secondary">
+                  Buscar
+                </button>
+              </div>
+              <span class="text-muted" id="output_field_getSalesValue"></span>
+            </div>
+          </form>          
+
+          <br />
+
+          <form class="card buyMsg">
+            <h6 style="text-align: left;"> Comprar conteúdo de um creator</h6>              
+            <div class="input-group">              
+              <!-- Bloco de coleta de valor de venda de conteudo de um criador -->
+              <input
+                type="text"
+                class="form-control"
+                id="field_input_buyMsg"
+                placeholder="Endereço do creator"
+              />        
+              <div class="input-group-append">
+                <button type="button" id="btnBuyMsgs" class="btn btn-secondary">
+                  Comprar
+                </button>
+              </div>
+            </div>
+          </form>  
+
+          <br />
+        </div>
+
+        <div class="col-md order-md mb">
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Seção Subscriber</span>
+            <span class="badge badge-secondary badge-pill" id="output_field_getNameSub"
+              >#</span
+            >
+          </h4>
+          <form class="card subscriberRegistration">
+            <h6 style="text-align: left;"> Cadastro de Subscriber</h6>  
+            <div class="input-group">
+              <!-- Bloco de criação de mensagem -->
+              <input
+                type="text"
+                class="form-control"
+                id="field_input_nameSubscriberRegistration"
+                placeholder="Nome"
+              />
+              <div class="input-group-append">
+                <button type="button" id="btnRegistrationSubscriber" class="btn btn-secondary">
+                  Cadastrar
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <br />
+          <!-- Tabela com conteudo-->
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align: center;" scope="col" colspan="3">Conteúdo</th>
+              </tr>
+              <tr>
+                  <th class="small text-center" scope="col">Título</th>
+                  <th class="small text-center" scope="col">Autor</th>
+                  <th class="small text-center" scope="col">Data</th>
+                </tr>
+            </thead>
+            <tbody id="tableConteudo" class="small text-center">
+            </tbody>
+          </table>
+
+
+          <br />
+          <!-- Tabela com inscrições-->
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align: center;" scope="col" colspan="3">Assinaturas</th>
+              </tr>
+              <tr>
+                  <th class="small text-center" scope="col">Creator</th>
+                </tr>
+            </thead>
+            <tbody id="tableInscricoes" class="small text-center">
+            </tbody>
+          </table>
+
+          <br />
+          <!-- Tabela com inscrições expiradas-->
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align: center;" scope="col" colspan="3">Assinaturas Expiradas</th>
+              </tr>
+              <tr>
+                  <th class="small text-center" scope="col">Creator</th>
+                </tr>
+            </thead>
+            <tbody id="tableInscricoesExpiradas" class="small text-center">
+            </tbody>
+          </table>
+
+          <form class="card renewSubscribe">
+            <h6 style="text-align: left;"> Renovar Assinatura</h6>  
+            <div class="input-group">
+              <!-- Bloco de renovar assinatura-->
+              <input
+                type="text"
+                class="form-control"
+                id="field_input_addressRenewSubscribe"
+                placeholder="Endereço"
+              />   
+              <input
+                type="number"
+                class="form-control"
+                id="field_input_subscriptionTimeRenewSubscribe"
+                placeholder="Quantidade de dias"
+              />        
+              <div class="input-group-append">
+                <button type="button" id="btnRenewSubscribe" class="btn btn-secondary">
+                  Renovar 
+                </button>
+              </div>
+            </div>
+          </form>          
+
+          <br />
+
+          <form class="card subscribe">
+            <h6 style="text-align: left;"> Subcribe em um creator</h6>              
+            <div class="input-group">
+              <!-- Bloco de subcribe em um creator -->
+              <input
+                type="text"
+                class="form-control"
+                id="field_input_addressSubscribe"
+                placeholder="Endereço"
+              />   
+              <input
+              type="number"
+              class="form-control"
+              id="field_input_subscriptionTimeSubscribe"
+              placeholder="Quantidade de dias"
+              />        
+              <div class="input-group-append">
+                <button type="button" id="btnSubscribe" class="btn btn-secondary">
+                  Atualizar
+                </button>
+              </div>
+            </div>
+          </form>    
+
+          <br />
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="text-align: center;" scope="col" colspan="3">Creators Registrados</th>
+              </tr>
+              <tr>
+                  <th class="small text-center" scope="col">Creator</th>
+                </tr>
+            </thead>
+            <tbody id="tableCreatorsRegistrados" class="small text-center">
+            </tbody>
+          </table>      
+          <br />          
+        </div>        
+      </div>
+      <br>      
+      <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">OnlySubs 2022</p>
+      </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="js/abi.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+</html>
