@@ -63,12 +63,13 @@ const DApp = {
 
 //function getCreators() external view returns(address[] memory)
 function getCreators() { 
-    return DApp.contracts.Onlysubs.getCreators().call();
+    return DApp.contracts.Onlysubs.getCreators().call({from: DApp.account});;
 }
 
 //function getCreatorFee(address _creator) public view returns(uint) 
 function getCreatorFee() {
-    return DApp.contracts.Onlysubs.getCreatorFee().call();
+    let creatorFee = document.getElementsById("field_input_getCreatorFee");
+    return DApp.contracts.Onlysubs.getCreatorFee(creatorFee).call();
 }
 
 //function getNameCreator() view external returns(string)
@@ -97,12 +98,12 @@ function withdraw() {
 //function getMessages(address _creator) 
 //public view returns(string[] memory, string[] memory, uint[] memory)
 function getMessages(creator) {
-    return DApp.contracts.Onlysubs.methods.getMessages(creator).call()
+    return DApp.contracts.Onlysubs.methods.getMessages(creator).call({from: DApp.account});
 }
 
 //function getNameSub() external view returns(string)
 function getNameSub() {
-    return DApp.contracts.Onlysubs.getNameSub().call();
+    return DApp.contracts.Onlysubs.getNameSub().call({from: DApp.account});
 }    
 
 //function getSignatures() external returns(address[] memory)
@@ -152,13 +153,13 @@ function buyMsgs() {
 //function updateFee(uint _fee) external 
 function updateFee() {
     let newFeeCreator = document.getElementById("field_input_updateFee");
-    return DApp.contracts.Onlysubs.methods.updateFee(newFeeCreator).send({from: DApp.account});
+    return DApp.contracts.Onlysubs.methods.updateFee(newFeeCreator).send({from: DApp.account}).then(atualizaInterface);
 }
     
 //function updateSalesValue(uint _salesValue) external 
 function updateSalesValue() {
     let newSalesValueCreator = document.getElementById("field_input_updateSalesValue");
-    return DApp.contracts.Onlysubs.methods.updateSalesValue(newSalesValueCreator).send({from: DApp.account});
+    return DApp.contracts.Onlysubs.methods.updateSalesValue(newSalesValueCreator).send({from: DApp.account}).then(atualizaInterface);
 }
     
 
@@ -168,7 +169,7 @@ function updateSalesValue() {
 //function subscriberRegistration(string memory _name) external 
 function subscriberRegistration() {
     let nameRegistrationSub = document.getElementById("field_input_nameSubscriberRegistration");
-    return DApp.contracts.Onlysubs.methods.subscriberRegistration(nameRegistrationSub).send({from: DApp.account});
+    return DApp.contracts.Onlysubs.methods.subscriberRegistration(nameRegistrationSub).send({from: DApp.account}).then(atualizaInterface);
 }
 
 //function subscribe(address _creator, uint _subscriptionTime) payable external 
@@ -179,7 +180,7 @@ function subscribe() {
     getCreatorFee(newCreator_sub).then((creatorFee) => {
       feeSub = creatorFee * subscriptionTime_sub;
     });
-    return DApp.contracts.Onlysubs.methods.subscribe(newCreator_sub,subscriptionTime_sub).send({from: DApp.account, value:feeSub});
+    return DApp.contracts.Onlysubs.methods.subscribe(newCreator_sub,subscriptionTime_sub).send({from: DApp.account, value:feeSub}).then(atualizaInterface);
 }
 
 //function renewSubscribe(address _creator, uint _subscriptionTime) payable external 
@@ -190,7 +191,7 @@ function renewSubscribe() {
     getCreatorFee(creatorRenew).then((creatorFee) => {
       feeRenerSub = creatorFee * subscriptionTimeRenew;
     });
-    return DApp.contracts.Onlysubs.methods.renewSubscribe(creatorRenew, subscriptionTimeRenew).send({from: DApp.account, value:feeRenerSub});
+    return DApp.contracts.Onlysubs.methods.renewSubscribe(creatorRenew, subscriptionTimeRenew).send({from: DApp.account, value:feeRenerSub}).then(atualizaInterface);
 }
 
 function inicializaInterface() {
@@ -198,46 +199,8 @@ function inicializaInterface() {
     document.getElementById("btnCreateMsg").style.display = "none";
     document.getElementById("btnCreatorRegistration").style.display = "block";
     document.getElementById("btnWithdraw").style.display = "none";    
-    getNameCreator().then((result) => { 
-      if(result) {
-          getAmountCreator().then((amountCretor) => {
-            document.getElementById("output_field_getNameCreator").innerHTML = result + " $" + amountCretor;
-            if(amountCretor > 0){
-                document.getElementById("btnWithdraw").style.display = "block";  
-            }
-          });
-
-          document.getElementById("btnBuyMsgs").style.display = "block";
-          document.getElementById("btnCreateMsg").style.display = "block";
-          document.getElementById("btnCreatorRegistration").style.display = "none";
-      }    
-    });
     document.getElementById("btnRegistrationSubscriber").style.display = "block";
     document.getElementById("btnRenewSubscribe").style.display = "block";
-    getNameSub().then((result) => { 
-      if(result) {
-        document.getElementById("output_field_getNameSub").innerHTML = result;
-        document.getElementById("btnRegistrationSubscriber").style.display = "none";
-        document.getElementById("btnRenewSubscribe").style.display = "none";
-        getSignatures().then((assinaturas) => {
-          registrarAssinaturas(assinaturas);
-          let conteudos = []
-          for (let i = 0; i < assinaturas.length; i++){
-            getMessages(assinaturas[i]).then((conteudo) => {
-              conteudos.append(conteudo);
-            });  
-            registrarTodosCreators(todosCreators);
-          }
-        });        
-        getExpiredSubscriptions().then((registrarAssinaturasExpiradas) => {
-          registrarAssinaturas(registrarAssinaturasExpiradas);
-        });        
-
-      }    
-    });  
-    getCreators().then((todosCreators) => {
-      registrarTodosCreators(todosCreators);
-    });    
     document.getElementById("btnCreatorRegistration").onclick = creatorRegistration;
     document.getElementById("btnUpdateFee").onclick = updateFee;
     document.getElementById("btnUpdateSalesValue").onclick = updateSalesValue;
@@ -257,16 +220,42 @@ function inicializaInterface() {
 }
 
 function atualizaInterface() {
-
-  getCreators().then((result) => {
-    document.getElementById("output_field_getCreators").innerHTML = result;
-  });
-  getSignatures().then((result) => {
-    document.getElementById("output_field_getSignatures").innerHTML = result;
+  getNameCreator().then((result) => { 
+    if(result) {
+        getAmountCreator().then((amountCretor) => {
+          document.getElementById("output_field_getNameCreator").innerHTML = result + " $" + amountCretor;
+          if(amountCretor > 0){
+              document.getElementById("btnWithdraw").style.display = "block";  
+          }
+        });
+        document.getElementById("btnBuyMsgs").style.display = "block";
+        document.getElementById("btnCreateMsg").style.display = "block";
+        document.getElementById("btnCreatorRegistration").style.display = "none";
+    }    
   });  
-  getSubscribers().then((result) => {
-    document.getElementById("output_field_getSubscribers").innerHTML = result;
-  });
+  getNameSub().then((result) => { 
+    if(result) {
+      document.getElementById("output_field_getNameSub").innerHTML = result;
+      document.getElementById("btnRegistrationSubscriber").style.display = "none";
+      document.getElementById("btnRenewSubscribe").style.display = "none";
+      getSignatures().then((assinaturas) => {
+        registrarAssinaturas(assinaturas);
+        let conteudos = []
+        for (let i = 0; i < assinaturas.length; i++){
+          getMessages(assinaturas[i]).then((conteudo) => {
+            conteudos.append(conteudo);
+          });  
+          registrarTodosCreators(todosCreators);
+        }
+      });        
+      getExpiredSubscriptions().then((registrarAssinaturasExpiradas) => {
+        registrarAssinaturas(registrarAssinaturasExpiradas);
+      });        
+    }    
+  });  
+  getCreators().then((todosCreators) => {
+    registrarTodosCreators(todosCreators);
+  });    
   getSalesValue().then((result) => {
     document.getElementById("output_field_getSalesValue").innerHTML = result;
   });
